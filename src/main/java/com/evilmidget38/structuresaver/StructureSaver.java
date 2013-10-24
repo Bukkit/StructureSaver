@@ -1,6 +1,7 @@
 package com.evilmidget38.structuresaver;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,6 +62,12 @@ public class StructureSaver extends JavaPlugin {
                         chunkProvider.recreateStructures(regionX+chunkX, regionZ+chunkZ);
                     }
                 }
+            }
+            // Close the region file.
+            try {
+                region.c();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
