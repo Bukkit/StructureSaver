@@ -2,6 +2,7 @@ package com.evilmidget38.structuresaver;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.FilenameFilter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +39,13 @@ public class StructureSaver extends JavaPlugin {
         }
         // Extract the x and z coordinates from the region files.
         Pattern coordinatePattern = Pattern.compile("r\\.(.+)\\.(.+)\\.mca");
-        for (File file : regionDir.listFiles()) {
+        File[] files = regionDir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.toLowerCase().endsWith(".mca");
+            }
+        });
+
+        for (File file : files) {
             Matcher matcher = coordinatePattern.matcher(file.getName());
             int regionX = 0;
             int regionZ = 0;
