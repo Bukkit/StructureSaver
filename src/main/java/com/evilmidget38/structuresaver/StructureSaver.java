@@ -10,21 +10,17 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.minecraft.server.v1_6_R3.ChunkProviderServer;
 import net.minecraft.server.v1_6_R3.IChunkProvider;
 import net.minecraft.server.v1_6_R3.RegionFile;
 
 public class StructureSaver extends JavaPlugin {
     private static final String[] regionLocations = new String[] {"region", "DIM-1/region", "DIM1/region"}; 
-    
-    public void onEnable() {
-    }
-    
+
     public void saveAllStructures() {
-        getLogger().info("Saving all structures");
+        getLogger().info("Saving all structures...");
         for (World world : Bukkit.getWorlds()) {
             saveStructures(world);
         }
@@ -32,7 +28,7 @@ public class StructureSaver extends JavaPlugin {
     }
 
     public void saveStructures(World world) {
-        getLogger().info("Generating structures for "+world.getName());
+        getLogger().info("Generating structures for "+world.getName()+"...");
         long start = System.currentTimeMillis();
         File regionDir = getRegionsLocation(world);
         if (regionDir == null) {
@@ -52,11 +48,10 @@ public class StructureSaver extends JavaPlugin {
                 getLogger().severe("Unable to handle region: "+file.getName());
                 continue;
             }
-            getLogger().info("Creating structures for region: "+regionX+", "+regionZ);
             regionX = regionX << 5;
             regionZ = regionZ << 5;
             RegionFile region = new RegionFile(file);
-            IChunkProvider chunkProvider = ((CraftWorld) world).getHandle().chunkProvider;
+            IChunkProvider chunkProvider = ((ChunkProviderServer) ((CraftWorld) world).getHandle().chunkProvider).chunkProvider;
             // Iterate over all potential chunks in the region.
             for (int chunkX = 0; chunkX < 32; chunkX++) {
                 for (int chunkZ = 0; chunkZ < 32; chunkZ++) {
@@ -104,14 +99,6 @@ public class StructureSaver extends JavaPlugin {
             return true;
         } else {
             return false;
-        }
-    }
-    
-    @EventHandler
-    public void onChunkLoad(ChunkLoadEvent e) {
-        // temporary debug code.
-        if (e.isNewChunk()) {
-            e.getChunk().unload(false, false);
         }
     }
 }

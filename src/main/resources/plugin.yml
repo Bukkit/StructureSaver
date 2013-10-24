@@ -1,5 +1,5 @@
 main: com.evilmidget38.structuresaver.StructureSaver
-version: 0.1
+version: 1.0
 name: StructureSaver
 author: evilmidget38
 commands:
