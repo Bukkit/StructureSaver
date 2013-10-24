@@ -62,6 +62,12 @@ public class StructureSaver extends JavaPlugin {
                     }
                 }
             }
+            try {
+				region.c();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
 
         getLogger().info("Done generating structures for " + world.getName() + ".  Took "+ (System.currentTimeMillis() - start) / 1000 + " seconds.");
