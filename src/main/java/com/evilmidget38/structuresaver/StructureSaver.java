@@ -18,18 +18,18 @@ import net.minecraft.server.v1_6_R3.IChunkProvider;
 import net.minecraft.server.v1_6_R3.RegionFile;
 
 public class StructureSaver extends JavaPlugin {
-    private static final String[] regionLocations = new String[] {"region", "DIM-1/region", "DIM1/region"}; 
+    private static final String[] regionLocations = new String[] {"region", "DIM-1/region", "DIM1/region"};
 
     public void saveAllStructures() {
         getLogger().info("Saving all structures...");
         for (World world : Bukkit.getWorlds()) {
             saveStructures(world);
         }
-        getLogger().info("Done saving structures!");
+        getLogger().info("Done saving all structures!");
     }
 
     public void saveStructures(World world) {
-        getLogger().info("Generating structures for "+world.getName()+"...");
+        getLogger().info("Generating structures for '"+world.getName()+"'...");
         long start = System.currentTimeMillis();
         File regionDir = getRegionsLocation(world);
         if (regionDir == null) {
@@ -71,11 +71,11 @@ public class StructureSaver extends JavaPlugin {
             }
         }
 
-        getLogger().info("Done generating structures for " + world.getName() + ".  Took "+ (System.currentTimeMillis() - start) / 1000 + " seconds.");
+        getLogger().info("Done generating structures for '" + world.getName() + "'. Took "+ (System.currentTimeMillis() - start) / 1000 + " seconds.");
         start = System.currentTimeMillis();
-        getLogger().info("Saving structures for "+world.getName());
+        getLogger().info("Saving structures for '"+world.getName()+"'");
         ((CraftWorld) world).getHandle().worldMaps.a();
-        getLogger().info("Done saving structures for "+world.getName() + ".  Took "+ (System.currentTimeMillis() - start) / 1000 + " seconds.");
+        getLogger().info("Done saving structures for '"+world.getName() + "'. Took "+ (System.currentTimeMillis() - start) / 1000 + " seconds.");
     }
 
     private File getRegionsLocation(World world) {
@@ -91,18 +91,20 @@ public class StructureSaver extends JavaPlugin {
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.YELLOW+"Generating structures for all worlds.  See your console for details.");
+            sender.sendMessage(ChatColor.YELLOW+"Saving structures for all worlds. See your console for details.");
             saveAllStructures();
+            sender.sendMessage(ChatColor.YELLOW+"Done saving structures for all worlds.");
             return true;
         } else if (args.length == 1) {
             String worldName = args[0];
             World world = getServer().getWorld(worldName);
             if (world == null) {
-                sender.sendMessage(ChatColor.RED+"Unable to find world \'"+worldName+"\'.");
+                sender.sendMessage(ChatColor.RED+"Unable to find world '"+worldName+"'.");
                 return false;
             }
-            sender.sendMessage(ChatColor.YELLOW+"Generating structures for "+worldName+".  See your console for details.");
+            sender.sendMessage(ChatColor.YELLOW+"Saving structures for '"+worldName+"'. See your console for details.");
             saveStructures(world);
+            sender.sendMessage(ChatColor.YELLOW+"Done saving structures for '"+worldName+"'.");
             return true;
         } else {
             return false;
