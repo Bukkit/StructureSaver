@@ -37,6 +37,10 @@ public class StructureSaver extends JavaPlugin {
     }
 
     private void saveStructures(World world, boolean force) {
+        if (!world.canGenerateStructures()) {
+            return;
+        }
+
         getLogger().info("Generating structures for '"+world.getName()+"'...");
         long start = System.currentTimeMillis();
         File regionDir = getRegionsLocation(world);
