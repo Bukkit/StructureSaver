@@ -3,6 +3,8 @@ package com.evilmidget38.structuresaver;
 import java.io.File;
 import java.io.IOException;
 import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,19 +19,21 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.minecraft.server.v1_6_R3.ChunkProviderServer;
 import net.minecraft.server.v1_6_R3.IChunkProvider;
 import net.minecraft.server.v1_6_R3.RegionFile;
+import org.apache.commons.lang.StringUtils;
 
 public class StructureSaver extends JavaPlugin {
     private static final String[] regionLocations = new String[] {"region", "DIM-1/region", "DIM1/region"};
+    private static final String[] STRUCTURE_FILES = new String[] {"Mineshaft.dat", "Fortress.dat", "Stronghold.dat", "Temple.dat", "Village.dat"};
 
-    public void saveAllStructures() {
+    private void saveAllStructures(boolean force) {
         getLogger().info("Saving all structures...");
         for (World world : Bukkit.getWorlds()) {
-            saveStructures(world);
+            saveStructures(world, force);
         }
         getLogger().info("Done saving all structures!");
     }
 
-    public void saveStructures(World world) {
+    private void saveStructures(World world, boolean force) {
         getLogger().info("Generating structures for '"+world.getName()+"'...");
         long start = System.currentTimeMillis();
         File regionDir = getRegionsLocation(world);
@@ -37,6 +41,11 @@ public class StructureSaver extends JavaPlugin {
             getLogger().severe("Unable to locate the region files for: "+world.getName());
             return;
         }
+
+        if (force) {
+            removeExistingStructures(world);
+        }
+
         // Extract the x and z coordinates from the region files.
         Pattern coordinatePattern = Pattern.compile("r\\.(.+)\\.(.+)\\.mca");
         File[] files = regionDir.listFiles(new FilenameFilter() {
@@ -96,10 +105,24 @@ public class StructureSaver extends JavaPlugin {
         return null;
     }
 
+    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        boolean force = false;
+
+        for (int pos = args.length - 1; pos >= 0; pos--) {
+            if (args[pos].equalsIgnoreCase("force")) {
+                force = true;
+                args = Arrays.copyOf(args, pos);
+                break;
+            }
+        }
+
         if (args.length == 0) {
             sender.sendMessage(ChatColor.YELLOW+"Saving structures for all worlds. See your console for details.");
-            saveAllStructures();
+            if (force) {
+                sender.sendMessage(ChatColor.YELLOW + "Forcing removal of existing structure data for all worlds.");
+            }
+            saveAllStructures(force);
             sender.sendMessage(ChatColor.YELLOW+"Done saving structures for all worlds.");
             return true;
         } else if (args.length == 1) {
@@ -110,11 +133,30 @@ public class StructureSaver extends JavaPlugin {
                 return false;
             }
             sender.sendMessage(ChatColor.YELLOW+"Saving structures for '"+worldName+"'. See your console for details.");
-            saveStructures(world);
+            if (force) {
+                sender.sendMessage(ChatColor.YELLOW + "Forcing removal of existing structure data for '" + worldName + "'");
+            }
+            saveStructures(world, force);
             sender.sendMessage(ChatColor.YELLOW+"Done saving structures for '"+worldName+"'.");
             return true;
         } else {
             return false;
         }
+    }
+
+    private void removeExistingStructures(World world) {
+        File baseFile = new File(((CraftWorld) world).getWorldFolder(), "data");
+        if (!baseFile.isDirectory()) {
+            return;
+        }
+
+        for (String structure : STRUCTURE_FILES) {
+            File structureFile = new File(baseFile, structure);
+            if (structureFile.exists()) {
+                structureFile.delete();
+            }
+        }
+
+        getLogger().log(Level.INFO, "Deleted existing structure files for '{0}'", world.getName());
     }
 }

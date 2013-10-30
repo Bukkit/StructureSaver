@@ -5,5 +5,5 @@ author: evilmidget38
 commands:
   save-structures:
     permission: structuresaver.save
-    usage: /<command> [worldname]
+    usage: /<command> [worldname] [force]
     description: Saves all structures in the given world, or in all worlds.
