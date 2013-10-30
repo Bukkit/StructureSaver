@@ -137,7 +137,7 @@ public class StructureSaver extends JavaPlugin {
             World world = getServer().getWorld(worldName);
             if (world == null) {
                 sender.sendMessage(ChatColor.RED+"Unable to find world '"+worldName+"'.");
-                return false;
+                return true;
             }
             sender.sendMessage(ChatColor.YELLOW+"Saving structures for '"+worldName+"'. See your console for details.");
             if (force) {
