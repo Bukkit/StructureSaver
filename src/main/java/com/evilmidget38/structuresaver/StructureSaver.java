@@ -1,9 +1,12 @@
 package com.evilmidget38.structuresaver;
 
+import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.IOException;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,7 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.minecraft.server.v1_6_R3.ChunkProviderServer;
 import net.minecraft.server.v1_6_R3.IChunkProvider;
 import net.minecraft.server.v1_6_R3.RegionFile;
-import org.apache.commons.lang.StringUtils;
+import org.bukkit.util.StringUtil;
 
 public class StructureSaver extends JavaPlugin {
     private static final String[] regionLocations = new String[] {"region", "DIM-1/region", "DIM1/region"};
@@ -142,6 +145,24 @@ public class StructureSaver extends JavaPlugin {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length == 1) {
+            List<String> worlds = new ArrayList<String>();
+            for (World world : sender.getServer().getWorlds()) {
+                worlds.add(world.getName());
+            }
+            worlds.add("force");
+            return StringUtil.copyPartialMatches(args[0], worlds, new ArrayList<String>(worlds.size()));
+        } else if (args.length == 2) {
+            if (!args[0].equalsIgnoreCase("force") && StringUtil.startsWithIgnoreCase("force", args[1])) {
+                return ImmutableList.of("force");
+            }
+        }
+
+        return ImmutableList.of();
     }
 
     private void removeExistingStructures(World world) {
