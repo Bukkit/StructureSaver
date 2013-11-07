@@ -41,11 +41,11 @@ public class StructureSaver extends JavaPlugin {
             return;
         }
 
-        getLogger().info("Generating structures for '"+world.getName()+"'...");
+        getLogger().info("Generating structures for '" + world.getName() + "'...");
         long start = System.currentTimeMillis();
         File regionDir = getRegionsLocation(world);
         if (regionDir == null) {
-            getLogger().severe("Unable to locate the region files for: "+world.getName());
+            getLogger().severe("Unable to locate the region files for: " + world.getName());
             return;
         }
 
@@ -69,7 +69,7 @@ public class StructureSaver extends JavaPlugin {
                 regionX = Integer.parseInt(matcher.group(1));
                 regionZ = Integer.parseInt(matcher.group(2));
             } else {
-                getLogger().severe("Unable to handle region: "+file.getName());
+                getLogger().severe("Unable to handle region: " + file.getName());
                 continue;
             }
             regionX = regionX << 5;
@@ -96,9 +96,9 @@ public class StructureSaver extends JavaPlugin {
 
         getLogger().info("Done generating structures for '" + world.getName() + "'. Took "+ (System.currentTimeMillis() - start) / 1000 + " seconds.");
         start = System.currentTimeMillis();
-        getLogger().info("Saving structures for '"+world.getName()+"'");
+        getLogger().info("Saving structures for '" + world.getName() + "'");
         ((CraftWorld) world).getHandle().worldMaps.a();
-        getLogger().info("Done saving structures for '"+world.getName() + "'. Took "+ (System.currentTimeMillis() - start) / 1000 + " seconds.");
+        getLogger().info("Done saving structures for '" + world.getName() + "'. Took "+ (System.currentTimeMillis() - start) / 1000 + " seconds.");
     }
 
     private File getRegionsLocation(World world) {
@@ -125,26 +125,26 @@ public class StructureSaver extends JavaPlugin {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.YELLOW+"Saving structures for all worlds. See your console for details.");
+            sender.sendMessage(ChatColor.YELLOW + "Saving structures for all worlds. See your console for details.");
             if (force) {
                 sender.sendMessage(ChatColor.YELLOW + "Forcing removal of existing structure data for all worlds.");
             }
             saveAllStructures(force);
-            sender.sendMessage(ChatColor.YELLOW+"Done saving structures for all worlds.");
+            sender.sendMessage(ChatColor.YELLOW + "Done saving structures for all worlds.");
             return true;
         } else if (args.length == 1) {
             String worldName = args[0];
             World world = getServer().getWorld(worldName);
             if (world == null) {
-                sender.sendMessage(ChatColor.RED+"Unable to find world '"+worldName+"'.");
+                sender.sendMessage(ChatColor.RED + "Unable to find world '" + worldName + "'.");
                 return true;
             }
-            sender.sendMessage(ChatColor.YELLOW+"Saving structures for '"+worldName+"'. See your console for details.");
+            sender.sendMessage(ChatColor.YELLOW + "Saving structures for '" + worldName + "'. See your console for details.");
             if (force) {
                 sender.sendMessage(ChatColor.YELLOW + "Forcing removal of existing structure data for '" + worldName + "'");
             }
             saveStructures(world, force);
-            sender.sendMessage(ChatColor.YELLOW+"Done saving structures for '"+worldName+"'.");
+            sender.sendMessage(ChatColor.YELLOW + "Done saving structures for '" + worldName + "'.");
             return true;
         } else {
             return false;
