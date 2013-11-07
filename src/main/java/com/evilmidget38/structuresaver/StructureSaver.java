@@ -182,6 +182,6 @@ public class StructureSaver extends JavaPlugin {
             }
         }
 
-        getLogger().log(Level.INFO, "Deleted existing structure files for '{0}'", world.getName());
+        getLogger().log(Level.INFO, "Deleted existing structure files for '" + world.getName() + "'.");
     }
 }
